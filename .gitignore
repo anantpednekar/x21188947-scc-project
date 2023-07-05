@@ -1,0 +1,8 @@
+# Ignore log files
+BGL.log
+temp.log
+# Ignore compiled binaries
+*.exe
+*.o
+
+ 
