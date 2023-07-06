@@ -2,6 +2,7 @@
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import datetime
+#6. For each day of the week, what is the average number of seconds over which "re-synch state events" occurred?
 
 class MRJobAvgNoSec(MRJob):
     def avg_seconds_day_mapper(self, _, line):
