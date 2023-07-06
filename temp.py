@@ -10,11 +10,12 @@ class MRJobAvgNoSec(MRJob):
             date = fields[2]
             day_of_week = datetime.datetime.strptime(date, "%Y.%m.%d").strftime("%A")
             message_content = ' '.join(fields[9:])
-            if "re-synch state event" in message_content:
-                yield day_of_week, 1
+            if "re-synch state event" in message_content and "seconds" in fields[-1]:
+                seconds = fields[-2]
+                yield day_of_week, int(seconds)
 
-    def avg_seconds_day_reducer(self, day_of_week , counts):
-        day = list(counts)
+    def avg_seconds_day_reducer(self, day_of_week , seconds):
+        day = list(seconds)
         yield day_of_week, sum(day)/len(day)
 
     def steps(self):
