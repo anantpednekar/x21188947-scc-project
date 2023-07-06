@@ -17,14 +17,26 @@ class MRTopFiveHoursJob(MRJob):
         yield hour, sum(list(values))
 
     def top_five_hours_reducer(self, hour, counts):
-        
         yield hour, sum(list(counts))
+        
+    def top_five(self, hour, values):
+        top_five = []
+        for value in values:
+            if len(top_five) > 5:
+                if value > min(top_five):
+                    top_five.remove(min(top_five))
+                    top_five.append(value)
+            else:
+                top_five.append(value)
+        
+            
 
     def steps(self):
         return [
-            MRStep(mapper=self.fatallog_mapper,
-                   combiner=self.fatallog_combiner,
-                   reducer=self.fatallog_reducer)
+            MRStep(mapper=self.top_five_hours_mapper,
+                   combiner=self.top_five_hours_combiner,
+                   reducer=self.top_five_hours_reducer),
+            MRStep(reducer=self.top_five)
         ]
 if __name__ == '__main__':
     MRTopFiveHoursJob.run()
