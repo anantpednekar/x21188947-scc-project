@@ -5,38 +5,31 @@ import datetime
 
 #14. Which node generated the smallest number of KERNRTSP events?
 
-class MRTopFiveHoursJob(MRJob):
-    def top_five_hours_mapper(self, _, line):
+class MRJobSmallestEvents(MRJob):
+    def smallest_number_of_events_mapper(self, _, line):
         fields = line.split()
         if len(fields) >= 8:
-            date_time = fields[4]
-            hour = datetime.datetime.strptime(date_time, "%Y-%m-%d-%H.%M.%S.%f").hour
-            yield hour, 1
+            node = fields[3]
+            flag = fields[0]
+            if "KERNRTSP" in flag:
+                yield node, 1 
 
-    def top_five_hours_combiner(self, hour, values):
-        yield hour, sum(list(values))
+    def smallest_number_of_events_combiner(self, node, count):
+        yield node, sum(list(count))
 
-    def top_five_hours_reducer(self, hour, counts):
-        yield hour, sum(list(counts))
+    def smallest_number_of_events_reducer(self, node, count):
+        yield node, sum(list(count))
+    
+    def final_reducer(self, node, count):
+        #not working Min
+        yield node, min(list(count))
         
-    def top_five(self, hour, values):
-        top_five = []
-        for value in values:
-            if len(top_five) > 5:
-                if value > min(top_five):
-                    top_five.remove(min(top_five))
-                    top_five.append(value)
-            else:
-                top_five.append(value)
-        
-            
-
     def steps(self):
         return [
-            MRStep(mapper=self.top_five_hours_mapper,
-                   combiner=self.top_five_hours_combiner,
-                   reducer=self.top_five_hours_reducer),
-            MRStep(reducer=self.top_five)
+            MRStep(mapper=self.smallest_number_of_events_mapper,
+                   combiner=self.smallest_number_of_events_combiner,
+                   reducer=self.smallest_number_of_events_reducer),
+            MRStep(reducer=self.final_reducer),
         ]
 if __name__ == '__main__':
-    MRTopFiveHoursJob.run()
+    MRJobSmallestEvents.run()

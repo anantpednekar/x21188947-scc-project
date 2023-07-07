@@ -5,28 +5,31 @@ import datetime
 
 #14. Which node generated the smallest number of KERNRTSP events?
 
-class MRTopFiveHoursJob(MRJob):
-    def top_5_hour_log_mapper(self, _, line):
+class MRJobSmallestEvents(MRJob):
+    def smallest_number_of_events_mapper(self, _, line):
         fields = line.split()
         if len(fields) >= 8:
-            date = fields[2]
-            day_of_week = datetime.datetime.strptime(date, "%Y.%m.%d").strftime("%A")
-            level = fields[8]
-            message_content = ' '.join(fields[9:])
-            if day_of_week == "Monday" and level == "FATAL" and "machine check interrupt" in message_content:
-                yield None, 1
+            node = fields[3]
+            flag = fields[0]
+            if "KERNRTSP" in flag:
+                yield node, 1 
 
-    def top_5_hour_log_combiner(self, _, values):
-            yield None, sum(list(values))
+    def smallest_number_of_events_combiner(self, node, count):
+        yield node, sum(list(count))
 
-    def top_5_hour_log_reducer(self, _, counts):
-        yield "Total ", sum(list(counts))
-
+    def smallest_number_of_events_reducer(self, node, count):
+        yield node, sum(list(count))
+    
+    def final_reducer(self, node, count):
+        #not working Min
+        yield node, min(list(count))
+        
     def steps(self):
         return [
-            MRStep(mapper=self.fatallog_mapper,
-                   combiner=self.fatallog_combiner,
-                   reducer=self.top_5_hour_log_reducer)
+            MRStep(mapper=self.smallest_number_of_events_mapper,
+                   combiner=self.smallest_number_of_events_combiner,
+                   reducer=self.smallest_number_of_events_reducer),
+            MRStep(reducer=self.final_reducer),
         ]
 if __name__ == '__main__':
-    MRTopFiveHoursJob.run()
+    MRJobSmallestEvents.run()
