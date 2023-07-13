@@ -36,8 +36,7 @@ class MRJobLatestFatalError(MRJob):
             if latest_timestamp is None or timestamp > latest_timestamp:
                 latest_timestamp = timestamp
         if latest_timestamp:
-            date_str = latest_timestamp.strftime("%Y.%m.%d")
-            yield "latest fatal with Error reading message prefix", date_str
+            yield "latest fatal with Error reading message prefix", str(datetime.datetime.fromtimestamp(int(latest_timestamp)).date())
 
     def steps(self):
         return [
