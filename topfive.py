@@ -21,21 +21,7 @@ class MRTopFiveHoursJob(MRJob):
         yield hour, sum(list(counts))
 
     def reducer_find_top_five(self, hour, counts):
-        self.count_all-=1
-        top_five = []  # list to store top 5 key-count pairs
-        for count in counts:
-            if len(top_five) < 5:
-                top_five.append((hour, count))
-            else:
-                min_count = min(top_five, key=lambda x: x[1])[1]
-                if count > min_count:
-                    min_index = top_five.index(min(top_five, key=lambda x: x[1]))
-                    top_five[min_index] = (hour, count)
-        top_five_sorted = sorted(top_five, key=lambda x: x[1], reverse=True)[:5]
-        
-        if self.count_all==0 :
-            for pair in top_five_sorted:
-                yield pair[0], pair[1]
+        yield 
 
 
     def steps(self):
