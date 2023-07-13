@@ -18,11 +18,11 @@ class MRJobSmallestEvents(MRJob):
         yield node, sum(list(count))
 
     def smallest_number_of_events_reducer(self, node, count):
-        yield node, sum(list(count))
+        yield None, (node, sum(list(count)))
     
-    def final_reducer(self, node, count):
-        #not working Min
-        yield node, min(list(count))
+    def final_reducer(self, _, node_and_count):
+        
+        yield None, list(node_and_count)[:][1]
         
     def steps(self):
         return [

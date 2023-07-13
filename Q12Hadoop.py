@@ -2,7 +2,7 @@
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import datetime
-
+#12. What are the top 5 most frequently occurring hours in the log?
 class MRTopFiveHoursJob(MRJob):
 
     def mapper_get_hour(self, _, line):
@@ -50,7 +50,7 @@ class MRTopFiveHoursJob(MRJob):
             else:
                 topn[hour] = count
         for hour,count in sorted(topn.items(), key=lambda x: x[1], reverse=True):
-            yield None, (hour,count)
+            yield " The Top 5 most frequently occurring hours [Hours , Count] ", (hour,count)
 
     def steps(self):
         return [
