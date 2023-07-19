@@ -2,6 +2,7 @@
 BGL.log
 BGLnew.csv
 temp.log
+tempfile.txt
 # Ignore compiled binaries
 *.exe
 *.o
