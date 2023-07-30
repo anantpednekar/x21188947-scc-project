@@ -5,7 +5,7 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder \
       .config("spark.driver.host", "localhost") \
       .master("local[1]") \
-      .appName("Weather") \
+      .appName("bgl_log_app") \
       .getOrCreate() 
 
 # define a function to parse the log line and return the timestamp and the message content

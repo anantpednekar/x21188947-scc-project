@@ -19,7 +19,7 @@ class MRFatalLogEntriesMonMcCkIntJob(MRJob):
             yield None, sum(list(values))
 
     def fatallog_reducer(self, _, counts):
-        yield "Total ", sum(list(counts))
+        yield "Number of fatal log entries on Monday resulting from a 'machine check interrupt': ", sum(list(counts))
 
     def steps(self):
         return [
