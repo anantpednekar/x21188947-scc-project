@@ -6,5 +6,11 @@ tempfile.txt
 # Ignore compiled binaries
 *.exe
 *.o
+*.dat
+*.txt
+*.crtl
+*.lck
+*.log
+*.properties
 
- 
+metastore_db/
