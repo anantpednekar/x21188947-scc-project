@@ -15,13 +15,20 @@ class MRJobAvgNoSec(MRJob):
                 seconds = fields[-2]
                 yield day_of_week, int(seconds)
 
-    def avg_seconds_day_reducer(self, day_of_week , seconds):
+    def avg_seconds_day_combiner(self, day_of_week, seconds):
         day = list(seconds)
-        yield day_of_week, sum(day)/len(day)
+        sum_seconds = sum(day)
+        count = len(day)
+        yield day_of_week, sum_seconds, count
+
+    def avg_seconds_day_reducer(self, day_of_week, sum_seconds, count):
+        avg_seconds = sum_seconds / count
+        yield day_of_week, avg_seconds
 
     def steps(self):
         return [
             MRStep(mapper=self.avg_seconds_day_mapper,
+                   combiner=self.avg_seconds_day_combiner,
                    reducer=self.avg_seconds_day_reducer)
         ]
 if __name__ == '__main__':
