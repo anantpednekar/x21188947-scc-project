@@ -1,23 +1,35 @@
 #! /usr/bin/env python
+
+# Import the necessary modules.
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 import datetime
-#12. What are the top 5 most frequently occurring hours in the log?
+
+# This is the main class for the MapReduce job.
 class MRTopFiveHoursJob(MRJob):
 
+    # The mapper function takes a line from the input log file as input and
+    # emits the hour of the day and a count of 1 for each line.
     def mapper_get_hour(self, _, line):
         fields = line.split()
         if len(fields) >= 8:
+            # Get the hour from the date-time field in the log line.
             date_time = fields[4]
             hour = datetime.datetime.strptime(date_time, "%Y-%m-%d-%H.%M.%S.%f").hour
+            # Emit the hour and a count of 1.
             yield hour, 1
 
-    def combiner_sum_counts(self, hour, count):  
-       yield hour,sum(list(count))
+    # The combiner function sums the counts for each hour.
+    def combiner_sum_counts(self, hour, count):
+        # Yield the hour and the sum of the counts.
+        yield hour,sum(list(count))
 
     def reducer_sum_counts(self, hour, count):  
        yield None,(hour,sum(list(count)))
-       
+
+
+    # The combiner function for the top 5 hours step sums the counts for each
+    # hour.
     def combiner_top_five_hours(self, _, hours_counts):
         topn = dict()
         for hour_count in hours_counts:
@@ -34,7 +46,10 @@ class MRTopFiveHoursJob(MRJob):
                 topn[hour] = count
         for hour,count in topn.items():
             yield None, (hour,count)
-        
+
+
+    # The reducer function for the top 5 hours step sorts the hours and counts
+    # in descending order and yields the top 5 most frequently occurring hours.
     def reducer_top_five_hours(self, _, hours_counts):
         topn = dict()
         for hour_count in hours_counts:
@@ -52,6 +67,7 @@ class MRTopFiveHoursJob(MRJob):
         for hour,count in sorted(topn.items(), key=lambda x: x[1], reverse=True):
             yield " The Top 5 most frequently occurring hours [Hours , Count] ", (hour,count)
 
+    # This method defines the steps for the MapReduce job.
     def steps(self):
         return [
             MRStep(mapper=self.mapper_get_hour,
@@ -61,5 +77,6 @@ class MRTopFiveHoursJob(MRJob):
                    reducer=self.reducer_top_five_hours)
         ]
 
+# This is the main entry point for the MapReduce job.
 if __name__ == '__main__':
     MRTopFiveHoursJob.run()
