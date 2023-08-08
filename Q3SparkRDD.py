@@ -8,7 +8,7 @@ spark = SparkSession.builder \
     .appName("bgl_log_app") \
     .getOrCreate()
 
-def fatallog_mapper(line):
+def fatallog_filter(line):
     fields = line.split()
     if len(fields) >= 8:
         date = fields[2]
@@ -20,7 +20,7 @@ def fatallog_mapper(line):
     return 0
 
 results = spark.sparkContext.textFile("BGL.log") \
-    .map(fatallog_mapper) \
+    .map(fatallog_filter) \
     .reduce(lambda x, y: x + y)
 
 print("Number of fatal log entries on Monday resulting from a 'machine check interrupt':", results)
