@@ -39,7 +39,7 @@ You can download the BGL dataset from the following link: [BGL Dataset (Tar.gz)]
 ### Requirement 3: BGL.csv for SparkSQL
 - A CSV file named `BGL.csv` is required for use with SparkSQL.
 
-## Command for Converting BGL log to CSV
+## Command for Converting BGL log file to CSV
 
 To convert the `BGL.log` file to CSV format, you can use the following `awk` command:
 
